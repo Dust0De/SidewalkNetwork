@@ -1,0 +1,338 @@
+\documentclass[11pt]{article}
+
+\begin{document}
+
+\textbf{2 Introduction:}
+
+The Culver Academies is a private boarding school with a long history,
+established in 1894. Since then, the school has developed and expanded
+gradually, with new demands and constructions. The road network that has
+developed in these years is a complex transportation system that is not
+necessarily developed to fit the needs of students today.
+
+Most of the student body at the Culver Academies had probably been
+shouted at by adults for crossing the grass rather than taking a detour
+on the sidewalks. This is a result of frustration caused by the designs
+of the pathways on campus, feeling the irritation of seeing the
+destination drifting further away as we walked on the sidewalks. The
+existing pathway system is not planned for the continued growth of
+future transportation needs.
+
+~~~~~~ To make everyday path planning more convenient for students, this
+paper will explore the various methods to generate and optimize pathway
+networks in the Culver Academies. Designing an efficient path network
+has been a challenge due to the interdependent system consisting of
+discrete nodes. The goal of the designer is to construct a pathway
+system with minimum cost while satisfying traffic needs for members of
+the Culver Academies.
+
+~~~~~~ The problem of designing a network to meet certain constraints
+while optimizing specific characteristics draws similarities to many
+real-life applications in communication networks, water systems, and
+many other problems that could be modeled by the interactions between
+discrete individual nodes. This wide range of applications encouraged
+the development of many approaches. In this paper, I will be
+investigating the approaches of several agent-based and heuristic
+algorithms and applying them to the setting of Culver Academies.
+
+\textbf{3. Background Research}
+
+\subsection{3.1} \subsection{Network Planning}
+
+Designing a network is a complicated optimization problem typically
+formulated as an Integer Linear Programming (ILP) problem with
+considerations of performance, reliability, and cost. The discrete
+nature of the problem makes it a challenging problem to solve, often
+requiring human experts to set certain standards (Zhu et al, 2021). Many
+of the design processes and algorithms in network planning are developed
+to other fields of study, primarily in telecommunications.
+
+In telecommunications, designing a network starts with designing the
+topologies with regard to cost. This step outputs the physical network
+and the locations of intermediate nodes. Then, the traffic will be
+evaluated to formulate the logical links between nodes (Penttinen,
+1999). In this study, there is no difference between the logical and
+physical, but the process of topological design before optimizing based
+on traffic can be applied to this problem.
+
+\subsection{3.2 Graph Theory}
+
+A road network is often represented by a graph, with destinations and
+intersections as vertices, and roads as edges, denoted as \(G = (V,E)\).
+\emph{V} denotes the finite collection of vertices
+\(v_{1},v_{2},\ldots,v_{n}\  \in V\ \)and \emph{E} denotes the finite
+collection of edges. An edge connecting two vertices \(v_{1},v_{2}\)
+could be directed, represented by the ordered pair
+\(\left( v_{1},v_{2} \right)\), or can be non-directed, where it can be
+represented by a set \(\text{\{}v_{1}.v_{2}\text{\}}\). While a sidewalk
+seems to be intuitively non-directed as one can walk in both ways, a
+directed edge is also useful to represent direction of traffic at
+certain times.
+
+To better model the geographical distance and traffic capacity of the
+road network, a weighted graph \((G,w)\) is used where \(G\) denotes the
+graph representing the road network and \(w\) maps every element in
+\(E\) to a real number. In other words, it simply assigns one or more
+numbers to each edge.
+
+The relationship between nodes can be represented by an adjacency
+matrix. The adjacency matrix \(A\) for a graph \(G\) is an
+\(n\  \times n\) matrix. For the vertices
+\(v_{1},v_{2},\ldots,v_{n} \in V(G)\), if
+\(\left( v_{i},v_{j} \right) \in E(G)\), meaning that there exist an
+edge for \(v_{i}\) and \(v_{j}\), then \(A_{ij}\  = \ 1\), else
+\(A_{ij} = 0\). For a weighted graph, \(A_{ij}\) could also be equal to
+a weight value. (Griffin, 2023).
+
+\textbf{4. Problem Description:}
+
+\begin{figure}
+\centering
+\includegraphics[width=4.39137in,height=3.48844in]{media/image1.png}
+\caption{Figure 4.1 An unconnected graph with nodes representing
+buildings on the Culver campus.}
+\end{figure}
+
+Given the locations of 30 nodes which represents all buildings on campus
+and the traffic requirements \(t_{ij}\) between them, the problem is the
+determine which of the \(n(n - 1)\text{/}2\) possible edges to
+construct, which means choosing from \(2^{n(n - 1)\text{/}2}\) possible
+topologies (Corne et al., 2000).
+
+The aim of the design should be to satisfy the traffic demands of
+students and the cost demands presented to the school.
+
+To better fit the problem into a graph theory model, several assumptions
+are made regarding the graph representation of the path network:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  The path network is a 2-dimensional model, ignoring all differences in
+  attitude.
+\item
+  All paths have the same traffic capacity.
+\item
+  Only buildings enclosed by Academy Road, State Road 10, and East Shore
+  Drive will be included in this model.
+\end{enumerate}
+
+\textbf{5. Methodology:}
+
+\subsection{5.1. Slime Mold Algorithm (SMA)}
+
+The slime mold algorithm draws inspiration from \emph{Physarum
+polycephalum}, a type of slime mold that can form biological networks as
+a part of their foraging strategy to discover and exploit food sources
+(Tero et al., 2010). These biological networks have been optimized
+through many cycles of evolution, making it a reasonable approach to
+design a transportation network.
+
+\emph{Physarum} is an example of a plasmodium -\/- large, single-celled
+organism containing multiple nuclei. Each individual organism explores
+nearby regions but resolves into a discrete nutrient pathway network
+connecting the food sources directly with each other, and sometimes
+through additional intermediate points known as Steiner points to even
+minimize the total length of network (Tero et al., 2010).
+\emph{Physarum} approaches food by chemical compounds released in the
+air. After locating the food source, it will first diffuse around the
+environment to nearby food sources. After contact with a food source,
+most of the individual plasmodium decays, keeping only the ones needed
+to link the food source to other parts of the slime mold (Li et al.,
+2020).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1621}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8379}}@{}}
+\caption{Figure 5.1.1. A simplified flowchart showing different phases
+of the slime mold algorithm, and their corresponding biological
+processes (Li et al, 2020).}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Symbol}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Description}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Symbol}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Description}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(t\) & Current iteration \\
+\(P_{\max}\) & Maximum Pheromone Density for a cell \\
+\(\delta\) & Decay parameter \\
+\(\left( C_{x},C_{y} \right)\) & Current position of a slime cell \\
+\(\left( F_{x},F_{y} \right)\) & Position of target food \\
+MOVE\_TH & Moving threshold for primary diffusion \\
+DIFF\_TH & Diffusion threshold for secondary diffusion \\
+\(P_{i,j}(t)\) & Pheromone level of cell on \((i,j)\ \)at iteration
+\(t\) \\
+\(d\) & Direction diffusion \\
+\(D\) & Diffusion decay rate \\
+\(P_{\text{food}}\) & Pheromone level when a slime cell reaches food \\
+\end{longtable}
+
+\textbf{Table 5.1.1} Notation used in the slime mold algorithm
+
+The slime mold simulation on the Culver building complex will be
+implemented using Python, using the model described in Zhang, 2022. The
+simulated slime mold model, an \(N\  \times M\ \)lattice graph
+\(G = (L,E)\), where \(L\) is the set of cells for the \(N\  \times M\)
+lattice. In the simulation, the dimension of the lattice graph is
+determined by the maximum horizontal and vertical distance between
+buildings on Culver Academies.
+
+An individual cell contains its location index \((i,j)\), its current
+state, and its pheromone density. Each cell can have one of the
+following states at a given iteration \(t\), represented as
+\(\tau_{i,j}(t) \in \text{\{}0,1,2\text{\}}\).
+
+\begin{itemize}
+\item
+  0 - Empty: Cells without any food or slime.
+\item
+  1 - Slime: Cells that are considered part of the slime mold, which
+  would represent the paths on the pathway network.
+\item
+  2- Food: Cells containing food source, representing the nodes of the
+  pathway network.
+\end{itemize}
+
+In the simulation, an initial slime is placed onto one arbitrary food
+cell to start. It will then start searching for nearby unconnected food
+sources. Each slime cell, although viewed together as a single organism,
+is modeled as an individual agent, making its own decisions based on
+local inputs. Each slime cell will first gather the shortest path to the
+nearest food source, and will diffuse, by replicating into neighboring
+cells, following these four features (Zhang, 2022):
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Diffusion into another cell decreases that cell's pheromone density.
+\item
+  The slime will prioritize diffusing to a neighboring cell closest to
+  shortest path to the food source.
+\item
+  The slime will not diffuse if it is too far from a connected food
+  source, or if the target cell's pheromone level is too low.
+\item
+  The slime's decision will also be affected by the state of the
+  neighboring cell: food, empty, or slime.
+\end{enumerate}
+
+The diffusing mechanism can be categorized into primary and secondary
+diffusion, where primary diffusion occurs along the shortest path
+towards the food source, and secondary diffusion occurs when primary
+diffusion is blocked.
+
+Before diffusion happens, from all 8 possible directions (positive and
+negative directions along the horizontal, vertical, or diagonal), one or
+more direction indices \(d\) is selected if the direction points to a
+food source. These indices are set as the primary direction for a slime
+cell.
+
+Diffusion occurs when the pheromone level in the slime cell exceeds the
+moving threshold (\(P_{C_{x},C_{y}}(t) >\) MOVE\_TH), the slime cell
+attempts to initiate primary diffusion to the neighboring cell denoted
+by \((k,l)\). If the cell \((k,l)\) lies within the lattice grid \(G\)
+and is empty, the diffusion will begin by setting \((k,l)\) to a slime
+cell.
+
+Secondary diffusion occurs when the slime cell cannot diffuse along the
+primary direction. Secondary diffusion is random and occurs when the
+distance if its distance to the nearest food is smaller than the
+diffusion threshold (DIFF\_TH) (Cai et al, 2020). This process is much
+slower to reach a food source in order to favor primary diffusion, which
+uses the shortest distance.
+
+For every iteration during diffusion, an amount of pheromone is lost in
+a slime cell. The pheromone level of the starting cell is updated by
+this exponential decay function, where \(D\) is the diffusion decay rate
+and \(\delta\) is the decay parameter:
+
+\[P_{C_{x},C_{y}}(t + 1) = P_{C_{x},C_{y}}(t) \times (1 - D \times \delta)\]
+
+By diffusing into the neighboring cell \((k,l)\), the slime mold
+deposits an amount of pheromone to the new slime cell since an empty
+cell has no pheromone. The pheromone level is updated as follows to
+ensure that the level of pheromone does not exceed the maximum level
+\(P_{\max}\) (Zhang, 2022):
+
+\[P_{k,l}(t + 1) = \min\left( P_{k,l}(t) + \frac{P_{C_{x},C_{y}}(t)}{D},P_{\max} \right)\]
+
+This same function is used when a slime cell has less pheromone than its
+neighbor to simulate the transfer of nutrients from a food source.
+
+If any slime cell becomes adjacent to a food cell during an iteration,
+its pheromone level is instantly set to a fixed value
+\(P_{\text{food}}\). This represents a reward for finding food.
+
+The processes described above will continue until it reaches the maximum
+iteration set at the beginning of the simulation.
+
+During diffusion, the slime mold system will decay simultaneously based
+on its distance to a connected food source and pheromone density of the
+cell it is on. The diffused slimes will deliver nutrients to other food
+sources and increase pheromone levels in this process. If a slime cell
+has a pheromone level below a certain point, it will decay into an empty
+cell. This process ensures that only the most efficient nutrient
+pathways are kept (Li, et al, 2020).
+
+To model this, the activity of the slime cell is directly tied to its
+pheromone level so that if no exterior pheromone from the food sources
+is provided, it cannot move to a new location through diffusion and
+becoming inactive. Therefore, to determine the best path generated by
+the slime mold algorithm, I would only have to look at if any two food
+sources is connected by a continuous track of slime cells with high
+levels of pheromone.
+
+Works Cited
+
+Cai, Zhengying, et al. "A Node Selecting Approach for Traffic Network
+Based on Artificial Slime Mold." \emph{IEEE Access}, vol. 8, 2020, pp.
+8436-48, https://doi.org/10.1109/access.2020.2964002.
+
+Corne, David, et al. \emph{Telecommunications Optimization : Heuristics
+and Adaptive Techniques}. Wiley, 2000.
+
+Griffin, Christopher. \emph{Applied Graph Theory : an Introduction with
+Graph Optimization and Algebraic Graph Theory}. World Scientific, 2023.
+
+Lee, Jason. \emph{NETWORK OPTIMIZATION USING LINEAR PROGRAMMING AND
+REGRESSION}. 2016. U Oregon, Bachelor\textquotesingle s thesis.
+\emph{University of Oregon},
+scholarsbank.uoregon.edu/server/api/core/bitstreams/cff1b048-02b6-442a-9eae-3c2a7b170ead/content.
+Accessed 1 Oct. 2024.
+
+Li, Shimin, et al. "Slime Mould Algorithm: A New Method for Stochastic
+Optimization." \emph{Future Generation Computer Systems}, vol. 111, Oct.
+2020, pp. 300-23. \emph{ScienceDirect},
+https://doi.org/10.1016/j.future.2020.03.055. Accessed 15 Oct. 2024.
+
+Penttinen, Aleksi. Lecture. \emph{Helsinki University of Technology},
+1999, www.netlab.tkk.fi/opetus/s38145/s99/lectures/lect10.pdf. Accessed
+6 Oct. 2024.
+
+Tero, Atsushi, et al. "Rules for Biologically Inspired Adaptive Network
+Design." \emph{Science}, vol. 327, no. 5964, 2010, pp. 439--42.
+\emph{JSTOR}, http://www.jstor.org/stable/40508592. Accessed 15 Oct.
+2024.
+
+Zhang, Wenxiao. "CITS4403 Project Report." U of Western Australia, 17
+Oct. 2022. \emph{Github},
+github.com/MoeBuTa/SlimeMould/blob/master/report/report.pdf. Accessed 23
+Oct. 2024.
+
+Zhu, Hang, et al. "Network planning with deep reinforcement learning."
+\emph{SIGCOMM \textquotesingle21: Proceedings of the 2021 ACM SIGCOMM
+2021 Conference}. \emph{ACM Digital Library},
+dl.acm.org/doi/10.1145/3452296.3472902. Accessed 6 Oct. 2024.
+\end{document}
